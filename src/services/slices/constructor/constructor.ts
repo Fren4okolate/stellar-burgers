@@ -1,14 +1,37 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
 import { ConstructorState } from './constructorTypes';
+import { orderBurgerApi } from '@api';
+import { addOrder } from '../feed/feed';
 
 // Начальное состояние конструктора бургера
 const initialState: ConstructorState = {
   bun: null,
   ingredients: [],
   orderRequest: false,
-  orderModalData: null
+  orderModalData: null,
+  orderError: null
 };
+
+const getErrorMessage = (err: unknown, fallback: string): string =>
+  err instanceof Error
+    ? err.message
+    : typeof err === 'object' && err !== null && 'message' in err
+      ? String((err as { message: unknown }).message)
+      : fallback;
+
+export const createOrder = createAsyncThunk(
+  'burgerConstructor/createOrder',
+  async (ingredientIds: string[], { dispatch, rejectWithValue }) => {
+    try {
+      const orderData = await orderBurgerApi(ingredientIds);
+      dispatch(addOrder(orderData.order));
+      return orderData.order;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err, 'Ошибка оформления заказа'));
+    }
+  }
+);
 
 // Слайс конструктора бургера
 const constructorSlice = createSlice({
@@ -59,6 +82,26 @@ const constructorSlice = createSlice({
       updated.splice(to, 0, moved);
       state.ingredients = updated;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createOrder.pending, (state) => {
+        state.orderRequest = true;
+        state.orderError = null;
+      })
+      .addCase(
+        createOrder.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.orderRequest = false;
+          state.orderModalData = action.payload;
+          state.bun = null;
+          state.ingredients = [];
+        }
+      )
+      .addCase(createOrder.rejected, (state, action) => {
+        state.orderRequest = false;
+        state.orderError = action.payload as string;
+      });
   }
 });
 

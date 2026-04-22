@@ -1,13 +1,11 @@
-import { FC, ReactElement, useEffect } from 'react';
+import { FC, ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from '../../services/store';
+import { useSelector } from '../../services/store';
 import { Preloader } from '@ui';
-import { getUserApi } from '@api';
 import {
-  setUser,
-  setAuthChecked,
-  logout
-} from '../../services/slices/auth/auth';
+  selectIsAuthChecked,
+  selectIsLoggedIn
+} from '../../services/selectors/authSelectors';
 
 // Тип пропсов для защищённого маршрута
 interface ProtectedRouteProps {
@@ -20,31 +18,9 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   children,
   anonymous = false
 }) => {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const isAuthChecked = useSelector((state) => state.auth.isAuthChecked);
-  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const isAuthChecked = useSelector(selectIsAuthChecked);
   const location = useLocation();
-
-  // Проверяем авторизацию при первом рендере
-  useEffect(() => {
-    if (!isAuthChecked) {
-      getUserApi()
-        .then((res) => {
-          if (res && res.user) {
-            dispatch(setUser(res.user)); // если пользователь найден — авторизуем
-          } else {
-            dispatch(setAuthChecked(true)); // если нет — просто отмечаем, что проверка завершена
-          }
-        })
-        .catch((err) => {
-          if (err?.message === 'refreshToken expired') {
-            dispatch(logout()); // если refreshToken истёк — разлогиниваем
-          } else {
-            dispatch(setAuthChecked(true));
-          }
-        });
-    }
-  }, [dispatch, isAuthChecked]);
 
   // Пока идёт проверка авторизации — показываем прелоадер
   if (!isAuthChecked) {

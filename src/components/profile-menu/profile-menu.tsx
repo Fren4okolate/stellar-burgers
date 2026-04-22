@@ -2,8 +2,7 @@ import { FC } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ProfileMenuUI } from '@ui';
 import { useDispatch } from '../../services/store';
-import { logout } from '../../services/slices/auth/auth';
-import { logoutApi } from '@api';
+import { logoutUser } from '../../services/slices/auth/auth';
 
 // Компонент меню профиля пользователя
 export const ProfileMenu: FC = () => {
@@ -13,13 +12,8 @@ export const ProfileMenu: FC = () => {
 
   // Обработчик выхода из аккаунта
   const handleLogout = async () => {
-    try {
-      await logoutApi();
-      localStorage.removeItem('refreshToken');
-      document.cookie = 'accessToken=; Max-Age=0; path=/;';
-      dispatch(logout());
-      navigate('/login', { replace: true });
-    } catch (e) {}
+    await dispatch(logoutUser());
+    navigate('/login', { replace: true });
   };
 
   return <ProfileMenuUI handleLogout={handleLogout} pathname={pathname} />;

@@ -1,9 +1,7 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
-import { getUserApi } from '@api';
-import { setUser, setAuthChecked } from '../../services/slices/auth/auth';
-import { getCookie } from '../../utils/cookie';
+import { checkUserAuth } from '../../services/slices/auth/auth';
 import {
   ConstructorPage,
   Feed,
@@ -27,24 +25,9 @@ const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Инициализация авторизации из токена (cookie или localStorage)
+  // Инициализация авторизации через Redux
   useEffect(() => {
-    const token =
-      getCookie('accessToken') || localStorage.getItem('accessToken');
-    if (token) {
-      getUserApi()
-        .then((res) => {
-          if (res && res.user) {
-            dispatch(setUser(res.user));
-          }
-          dispatch(setAuthChecked(true));
-        })
-        .catch(() => {
-          dispatch(setAuthChecked(true));
-        });
-    } else {
-      dispatch(setAuthChecked(true));
-    }
+    dispatch(checkUserAuth());
   }, [dispatch]);
 
   return (

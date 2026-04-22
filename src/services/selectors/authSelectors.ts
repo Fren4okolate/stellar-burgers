@@ -12,3 +12,11 @@ export const selectIsLoggedIn = (state: RootState): boolean =>
 // Селектор статуса проверки авторизации
 export const selectIsAuthChecked = (state: RootState): boolean =>
   state.auth.isAuthChecked;
+
+// Селектор статуса загрузки авторизации
+export const selectAuthIsLoading = (state: RootState): boolean =>
+  state.auth.isLoading;
+
+// Селектор ошибки авторизации
+export const selectAuthError = (state: RootState): string | null =>
+  state.auth.error;

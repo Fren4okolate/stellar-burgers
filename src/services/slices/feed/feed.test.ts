@@ -8,7 +8,7 @@ const mockOrder = {
   name: 'Тестовый заказ',
   createdAt: '2023-01-01T00:00:00.000Z',
   updatedAt: '2023-01-01T00:00:00.000Z',
-  ingredients: [],
+  ingredients: []
 };
 
 describe('feedReducer', () => {
@@ -17,11 +17,17 @@ describe('feedReducer', () => {
     total: 0,
     totalToday: 0,
     isLoading: false,
-    error: null
+    error: null,
+    profileOrders: [],
+    profileOrdersLoading: false,
+    profileOrdersError: null,
+    currentOrder: null,
+    currentOrderLoading: false,
+    currentOrderError: null
   };
 
   it('устанавливает isLoading=true при загрузке ленты', () => {
-    // Диспатчим экшен fetchFeed.pending 
+    // Диспатчим экшен fetchFeed.pending
     const action = { type: fetchFeed.pending.type };
     // Получаем новый state после начала загрузки
     const state = feedReducer(initialState, action);
@@ -34,7 +40,7 @@ describe('feedReducer', () => {
   it('записывает ленту и isLoading=false при успешной загрузке', () => {
     // Мокаем payload с заказами и статистикой
     const payload = { orders: [mockOrder], total: 1, totalToday: 1 };
-    // Диспатчим экшен fetchFeed.fulfilled 
+    // Диспатчим экшен fetchFeed.fulfilled
     const action = { type: fetchFeed.fulfilled.type, payload };
     // Получаем новый state после успешной загрузки
     const state = feedReducer({ ...initialState, isLoading: true }, action);
@@ -50,7 +56,7 @@ describe('feedReducer', () => {
   it('записывает ошибку и isLoading=false при ошибке загрузки', () => {
     // Мокаем ошибку
     const error = 'Ошибка';
-    // Диспатчим экшен fetchFeed.rejected 
+    // Диспатчим экшен fetchFeed.rejected
     const action = { type: fetchFeed.rejected.type, payload: error };
     // Получаем новый state после ошибки
     const state = feedReducer({ ...initialState, isLoading: true }, action);

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getFeedsApi } from '@api';
+import { getFeedsApi, getOrderByNumberApi, getOrdersApi } from '@api';
 import { TOrder } from '@utils-types';
 import { FeedState } from './feedTypes';
 
@@ -9,8 +9,21 @@ const initialState: FeedState = {
   total: 0,
   totalToday: 0,
   isLoading: false,
-  error: null
+  error: null,
+  profileOrders: [],
+  profileOrdersLoading: false,
+  profileOrdersError: null,
+  currentOrder: null,
+  currentOrderLoading: false,
+  currentOrderError: null
 };
+
+const getErrorMessage = (err: unknown, fallback: string): string =>
+  err instanceof Error
+    ? err.message
+    : typeof err === 'object' && err !== null && 'message' in err
+      ? String((err as { message: unknown }).message)
+      : fallback;
 
 //Загрузка ленты заказов
 export const fetchFeed = createAsyncThunk(
@@ -19,8 +32,37 @@ export const fetchFeed = createAsyncThunk(
     try {
       const data = await getFeedsApi();
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Ошибка загрузки ленты');
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err, 'Ошибка загрузки ленты'));
+    }
+  }
+);
+
+// Загрузка заказов пользователя
+export const fetchProfileOrders = createAsyncThunk(
+  'feed/fetchProfileOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getOrdersApi();
+      return data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err, 'Ошибка загрузки заказов'));
+    }
+  }
+);
+
+// Загрузка заказа по номеру
+export const fetchOrderByNumber = createAsyncThunk(
+  'feed/fetchOrderByNumber',
+  async (number: number, { rejectWithValue }) => {
+    try {
+      const data = await getOrderByNumberApi(number);
+      if (data.orders && data.orders.length > 0) {
+        return data.orders[0];
+      }
+      return rejectWithValue('Заказ не найден');
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err, 'Ошибка загрузки заказа'));
     }
   }
 );
@@ -50,6 +92,37 @@ const feedSlice = createSlice({
       .addCase(fetchFeed.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchProfileOrders.pending, (state) => {
+        state.profileOrdersLoading = true;
+        state.profileOrdersError = null;
+      })
+      .addCase(
+        fetchProfileOrders.fulfilled,
+        (state, action: PayloadAction<TOrder[]>) => {
+          state.profileOrdersLoading = false;
+          state.profileOrders = action.payload;
+        }
+      )
+      .addCase(fetchProfileOrders.rejected, (state, action) => {
+        state.profileOrdersLoading = false;
+        state.profileOrdersError = action.payload as string;
+      })
+      .addCase(fetchOrderByNumber.pending, (state) => {
+        state.currentOrderLoading = true;
+        state.currentOrderError = null;
+        state.currentOrder = null;
+      })
+      .addCase(
+        fetchOrderByNumber.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.currentOrderLoading = false;
+          state.currentOrder = action.payload;
+        }
+      )
+      .addCase(fetchOrderByNumber.rejected, (state, action) => {
+        state.currentOrderLoading = false;
+        state.currentOrderError = action.payload as string;
       });
   }
 });

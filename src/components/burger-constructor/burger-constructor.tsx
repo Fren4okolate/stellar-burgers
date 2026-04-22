@@ -1,17 +1,14 @@
 import { FC, useMemo } from 'react';
-import { TConstructorIngredient, TOrder } from '@utils-types';
+import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { orderBurgerApi } from '@api';
-import { addOrder } from '../../services/slices/feed/feed';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   selectIsLoggedIn,
   selectIsAuthChecked
 } from '../../services/selectors/authSelectors';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  clearConstructor,
-  setOrderRequest,
+  createOrder,
   setOrderModalData
 } from '../../services/slices/constructor/constructor';
 import {
@@ -24,6 +21,7 @@ import {
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   // Используем селекторы из отдельного файла
   const bun = useSelector(selectConstructorBun);
   const ingredients = useSelector(selectConstructorIngredients);
@@ -33,28 +31,19 @@ export const BurgerConstructor: FC = () => {
   const isAuthChecked = useSelector(selectIsAuthChecked);
 
   // Обработчик оформления заказа
-  const onOrderClick = async (): Promise<void> => {
+  const onOrderClick = (): void => {
     if (!bun || orderRequest) return;
     if (!isAuthChecked) return;
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate('/login', { state: { from: location } });
       return;
     }
-    dispatch(setOrderRequest(true));
-    try {
-      const ingredientIds = [
-        bun._id,
-        ...ingredients.map((item) => item._id),
-        bun._id
-      ];
-      const orderData: { order: TOrder } = await orderBurgerApi(ingredientIds);
-      dispatch(setOrderModalData(orderData.order));
-      dispatch(addOrder(orderData.order));
-      dispatch(clearConstructor());
-    } catch (e) {
-    } finally {
-      dispatch(setOrderRequest(false));
-    }
+    const ingredientIds = [
+      bun._id,
+      ...ingredients.map((item) => item._id),
+      bun._id
+    ];
+    dispatch(createOrder(ingredientIds));
   };
 
   // Закрытие модального окна заказа
@@ -76,11 +65,7 @@ export const BurgerConstructor: FC = () => {
 
   // Флаг блокировки кнопки заказа
   const isOrderDisabled =
-    !bun ||
-    ingredients.length === 0 ||
-    orderRequest ||
-    !isAuthChecked ||
-    !isLoggedIn;
+    !bun || ingredients.length === 0 || orderRequest || !isAuthChecked;
 
   return (
     <BurgerConstructorUI

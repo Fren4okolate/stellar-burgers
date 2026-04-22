@@ -7,4 +7,5 @@ export type ConstructorState = {
   ingredients: TConstructorIngredient[];
   orderRequest: boolean;
   orderModalData: TOrder | null;
+  orderError: string | null;
 };

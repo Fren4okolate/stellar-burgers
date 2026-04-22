@@ -1,19 +1,23 @@
 import { ProfileOrdersUI } from '@ui-pages';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
-import { getOrdersApi } from '@api';
-import { TOrder } from '@utils-types';
 import { loadIngredients } from '../../services/slices/ingredients/ingredients';
 import { Preloader } from '@ui';
+import { fetchProfileOrders } from '../../services/slices/feed/feed';
+import {
+  selectProfileOrders,
+  selectProfileOrdersError,
+  selectProfileOrdersLoading
+} from '../../services/selectors/feedSelectors';
 
 // Компонент для отображения заказов пользователя в профиле
 export const ProfileOrders: FC = () => {
   const user = useSelector((state) => state.auth.user);
   const ingredients = useSelector((state) => state.ingredients.items);
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState<TOrder[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const orders = useSelector(selectProfileOrders);
+  const isLoading = useSelector(selectProfileOrdersLoading);
+  const error = useSelector(selectProfileOrdersError);
 
   // Загружаем ингредиенты, если их нет в сторе
   useEffect(() => {
@@ -25,14 +29,8 @@ export const ProfileOrders: FC = () => {
   // Загружаем заказы пользователя при изменении user
   useEffect(() => {
     if (!user) return;
-    setIsLoading(true);
-    getOrdersApi()
-      .then((data) => {
-        setOrders(data);
-      })
-      .catch((e) => setError(e?.message || 'Ошибка загрузки заказов'))
-      .finally(() => setIsLoading(false));
-  }, [user]);
+    dispatch(fetchProfileOrders());
+  }, [dispatch, user]);
 
   // Показываем прелоадер или ошибку, если нужно
   if (isLoading) return <Preloader />;

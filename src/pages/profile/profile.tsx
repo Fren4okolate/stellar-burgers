@@ -1,8 +1,10 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import { updateUserApi } from '@api';
-import { setUser } from '../../services/slices/auth/auth';
+import { updateUser } from '../../services/slices/auth/auth';
+
+const getErrorText = (err: unknown, fallback: string): string =>
+  err instanceof Error ? err.message : typeof err === 'string' ? err : fallback;
 
 // Компонент профиля пользователя
 export const Profile: FC = () => {
@@ -45,13 +47,10 @@ export const Profile: FC = () => {
         email: formValue.email
       };
       if (formValue.password) dataToSend.password = formValue.password;
-      const res = await updateUserApi(dataToSend);
-      if (res && res.user) {
-        dispatch(setUser(res.user));
-        setFormValue((prev) => ({ ...prev, password: '' }));
-      }
-    } catch (err: any) {
-      setUpdateUserError(err?.message || 'Ошибка обновления профиля');
+      await dispatch(updateUser(dataToSend)).unwrap();
+      setFormValue((prev) => ({ ...prev, password: '' }));
+    } catch (err) {
+      setUpdateUserError(getErrorText(err, 'Ошибка обновления профиля'));
     }
   };
 

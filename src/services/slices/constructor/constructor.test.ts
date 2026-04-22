@@ -1,4 +1,10 @@
-import { constructorReducer, addIngredient, removeIngredient, moveIngredient, clearConstructor } from './constructor';
+import {
+  constructorReducer,
+  addIngredient,
+  removeIngredient,
+  moveIngredient,
+  clearConstructor
+} from './constructor';
 
 // Мок-ингредиент для тестов (TConstructorIngredient)
 const mockIngredient = {
@@ -37,7 +43,8 @@ describe('constructorReducer', () => {
     bun: null,
     ingredients: [],
     orderRequest: false,
-    orderModalData: null
+    orderModalData: null,
+    orderError: null
   };
 
   it('добавляет ингредиент', () => {
@@ -78,7 +85,11 @@ describe('constructorReducer', () => {
 
   it('очищает конструктор', () => {
     // Создаём state с булкой и ингредиентом
-    const startState = { ...initialState, bun: mockBun, ingredients: [mockIngredient] };
+    const startState = {
+      ...initialState,
+      bun: mockBun,
+      ingredients: [mockIngredient]
+    };
     // Диспатчим экшен clearConstructor
     const state = constructorReducer(startState, clearConstructor());
     // Проверяем, что булка удалена

@@ -1,9 +1,11 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { LoginUI } from '@ui-pages';
-import { loginUserApi } from '@api';
 import { useDispatch } from '../../services/store';
-import { setUser } from '../../services/slices/auth/auth';
-import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../services/slices/auth/auth';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+const getErrorText = (err: unknown, fallback: string): string =>
+  err instanceof Error ? err.message : typeof err === 'string' ? err : fallback;
 
 // Компонент авторизации пользователя
 export const Login: FC = () => {
@@ -12,21 +14,18 @@ export const Login: FC = () => {
   const [errorText, setErrorText] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Обработка отправки формы авторизации на сервер
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     setErrorText('');
     try {
-      const res = await loginUserApi({ email, password });
-      if (res && res.user) {
-        localStorage.setItem('refreshToken', res.refreshToken);
-        document.cookie = `accessToken=${res.accessToken}`;
-        dispatch(setUser(res.user));
-        navigate('/profile', { replace: true });
-      }
-    } catch (err: any) {
-      setErrorText(err?.message || 'Ошибка авторизации');
+      await dispatch(loginUser({ email, password })).unwrap();
+      const from = location.state?.from?.pathname || '/profile';
+      navigate(from, { replace: true });
+    } catch (err) {
+      setErrorText(getErrorText(err, 'Ошибка авторизации'));
     }
   };
 

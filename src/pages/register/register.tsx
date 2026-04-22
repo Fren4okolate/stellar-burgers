@@ -1,9 +1,11 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { RegisterUI } from '@ui-pages';
-import { registerUserApi } from '@api';
 import { useDispatch } from '../../services/store';
-import { setUser } from '../../services/slices/auth/auth';
+import { registerUser } from '../../services/slices/auth/auth';
 import { useNavigate } from 'react-router-dom';
+
+const getErrorText = (err: unknown, fallback: string): string =>
+  err instanceof Error ? err.message : typeof err === 'string' ? err : fallback;
 
 //Компонент регистрации пользователя
 export const Register: FC = () => {
@@ -19,15 +21,12 @@ export const Register: FC = () => {
     e.preventDefault();
     setErrorText('');
     try {
-      const res = await registerUserApi({ name: userName, email, password });
-      if (res && res.user) {
-        localStorage.setItem('refreshToken', res.refreshToken);
-        document.cookie = `accessToken=${res.accessToken}`; // сохраняем accessToken
-        dispatch(setUser(res.user)); // авторизуем пользователя
-        navigate('/profile', { replace: true }); // переходим в профиль
-      }
-    } catch (err: any) {
-      setErrorText(err?.message || 'Ошибка регистрации');
+      await dispatch(
+        registerUser({ name: userName, email, password })
+      ).unwrap();
+      navigate('/profile', { replace: true }); // переходим в профиль
+    } catch (err) {
+      setErrorText(getErrorText(err, 'Ошибка регистрации'));
     }
   };
 

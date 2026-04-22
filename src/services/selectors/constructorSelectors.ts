@@ -17,3 +17,7 @@ export const selectOrderRequest = (state: RootState): boolean =>
 // Селектор данных модального окна заказа
 export const selectOrderModalData = (state: RootState) =>
   state.burgerConstructor.orderModalData;
+
+// Селектор ошибки оформления заказа
+export const selectOrderError = (state: RootState): string | null =>
+  state.burgerConstructor.orderError;

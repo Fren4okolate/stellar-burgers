@@ -4,7 +4,9 @@ describe('authReducer', () => {
   const initialState = {
     user: null,
     isLoggedIn: false,
-    isAuthChecked: false
+    isAuthChecked: false,
+    isLoading: false,
+    error: null
   };
 
   const mockUser = {
@@ -25,7 +27,12 @@ describe('authReducer', () => {
 
   it('разлогинивает пользователя', () => {
     // Создаём state с авторизованным пользователем
-    const loggedInState = { ...initialState, user: mockUser, isLoggedIn: true, isAuthChecked: true };
+    const loggedInState = {
+      ...initialState,
+      user: mockUser,
+      isLoggedIn: true,
+      isAuthChecked: true
+    };
     // Диспатчим экшен logout
     const state = authReducer(loggedInState, logout());
     // Проверяем, что пользователь удалён из state

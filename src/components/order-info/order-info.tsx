@@ -1,11 +1,16 @@
-import { FC, useMemo, useEffect, useState } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from '../../services/store';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
-import { getOrderByNumberApi } from '@api';
 import { loadIngredients } from '../../services/slices/ingredients/ingredients';
+import { fetchOrderByNumber } from '../../services/slices/feed/feed';
+import {
+  selectCurrentOrder,
+  selectCurrentOrderError,
+  selectCurrentOrderLoading
+} from '../../services/selectors/feedSelectors';
 
 // Компонент информации о заказе
 export const OrderInfo: FC = () => {
@@ -17,6 +22,9 @@ export const OrderInfo: FC = () => {
     (state) => state.ingredients.items
   );
   const dispatch = useDispatch();
+  const currentOrderData = useSelector(selectCurrentOrder);
+  const loading = useSelector(selectCurrentOrderLoading);
+  const error = useSelector(selectCurrentOrderError);
 
   // Загружаем ингредиенты, если их нет
   useEffect(() => {
@@ -25,30 +33,21 @@ export const OrderInfo: FC = () => {
     }
   }, [dispatch, ingredients.length]);
 
-  const [fetchedOrder, setFetchedOrder] = useState<TOrder | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const fetchedOrder =
+    currentOrderData && String(currentOrderData.number) === number
+      ? currentOrderData
+      : null;
 
   // Загружаем заказ по номеру, если его нет в feed
   useEffect(() => {
-    if (!orderData && number) {
-      setLoading(true);
-      setError(null);
-      getOrderByNumberApi(Number(number))
-        .then((res) => {
-          if (res.orders && res.orders.length > 0) {
-            setFetchedOrder(res.orders[0]);
-          } else {
-            setError('Заказ не найден');
-          }
-        })
-        .catch(() => setError('Ошибка загрузки заказа'))
-        .finally(() => setLoading(false));
+    if (!orderData && number && !fetchedOrder) {
+      dispatch(fetchOrderByNumber(Number(number)));
     }
-  }, [orderData, number]);
+  }, [dispatch, fetchedOrder, orderData, number]);
 
   // Текущий заказ: либо из feed, либо загруженный отдельно
   const currentOrder = orderData || fetchedOrder;
+  const currentOrderError = currentOrder ? null : error;
 
   // Считаем информацию о заказе: ингредиенты с количеством, дату, стоимость
   const orderInfo = useMemo(() => {
@@ -96,11 +95,11 @@ export const OrderInfo: FC = () => {
   }, [currentOrder, ingredients]);
 
   // Показываем прелоадер или ошибку, если нужно
-  if (loading) return <Preloader />;
-  if (error)
+  if (!currentOrder && loading) return <Preloader />;
+  if (currentOrderError)
     return (
       <div style={{ textAlign: 'center', color: 'red', margin: '2rem' }}>
-        {error}
+        {currentOrderError}
       </div>
     );
   if (!orderInfo) return <Preloader />;
