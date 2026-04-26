@@ -1,18 +1,39 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { RegisterUI } from '@ui-pages';
+import { useDispatch } from '../../services/store';
+import { registerUser } from '../../services/slices/auth/auth';
+import { useNavigate } from 'react-router-dom';
 
+const getErrorText = (err: unknown, fallback: string): string =>
+  err instanceof Error ? err.message : typeof err === 'string' ? err : fallback;
+
+//Компонент регистрации пользователя
 export const Register: FC = () => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorText, setErrorText] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  // Обработка отправки формы регистрации
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    setErrorText('');
+    try {
+      await dispatch(
+        registerUser({ name: userName, email, password })
+      ).unwrap();
+      navigate('/profile', { replace: true }); // переходим в профиль
+    } catch (err) {
+      setErrorText(getErrorText(err, 'Ошибка регистрации'));
+    }
   };
 
+  // Рендерим UI регистрацмии, передаём значения и обработчики
   return (
     <RegisterUI
-      errorText=''
+      errorText={errorText}
       email={email}
       userName={userName}
       password={password}
