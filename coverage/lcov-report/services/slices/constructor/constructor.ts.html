@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.24% </span>
+                <span class="strong">67.56% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>69/74</span>
+                <span class='fraction'>50/74</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/6</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/7</span>
+                <span class='fraction'>0/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.24% </span>
+                <span class="strong">67.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>69/74</span>
+                <span class='fraction'>50/74</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -160,18 +160,18 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -183,21 +183,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -233,19 +233,19 @@ const constructorSlice = createSlice({
 <span class="cstat-no" title="statement not covered" >      state.bun = action.payload;</span>
     },
     // Добавляем ингредиент в конструктор
-    addIngredient(state, action: PayloadAction&lt;TConstructorIngredient&gt;) {
-      state.ingredients.push(action.payload);
+    addIngredient<span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;TConstructorIngredient&gt;) {</span>
+<span class="cstat-no" title="statement not covered" >      state.ingredients.push(action.payload);</span>
     },
     // Удаляем ингредиент по id
-    removeIngredient(state, action: PayloadAction&lt;string&gt;) {
-      state.ingredients = state.ingredients.filter(
-        (item) =&gt; item.id !== action.payload
-      );
+    removeIngredient<span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;string&gt;) {</span>
+<span class="cstat-no" title="statement not covered" >      state.ingredients = state.ingredients.filter(</span>
+<span class="cstat-no" title="statement not covered" >        (item) =&gt; item.id !== action.payload</span>
+<span class="cstat-no" title="statement not covered" >      );</span>
     },
     // Очищаем конструктор (булка и ингредиенты)
-    clearConstructor(state) {
-      state.bun = null;
-      state.ingredients = [];
+    clearConstructor<span class="fstat-no" title="function not covered" >(state) {</span>
+<span class="cstat-no" title="statement not covered" >      state.bun = null;</span>
+<span class="cstat-no" title="statement not covered" >      state.ingredients = [];</span>
     },
     // Устанавливаем статус запроса оформления заказа
     setOrderRequest<span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;boolean&gt;) {</span>
@@ -256,22 +256,22 @@ const constructorSlice = createSlice({
 <span class="cstat-no" title="statement not covered" >      state.orderModalData = action.payload;</span>
     },
     // Перемещаем ингредиент внутри конструктора
-    moveIngredient(state, action: PayloadAction&lt;{ from: number; to: number }&gt;) {
-      const { from, to } = action.payload;
-      if (
-        from &lt; 0 ||
-        to &lt; 0 ||
-        from &gt;= state.ingredients.length ||
-        to &gt;= state.ingredients.length ||
-        from === to
-      ) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+    moveIngredient<span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;{ from: number; to: number }&gt;) {</span>
+<span class="cstat-no" title="statement not covered" >      const { from, to } = action.payload;</span>
+<span class="cstat-no" title="statement not covered" >      if (</span>
+<span class="cstat-no" title="statement not covered" >        from &lt; 0 ||</span>
+<span class="cstat-no" title="statement not covered" >        to &lt; 0 ||</span>
+<span class="cstat-no" title="statement not covered" >        from &gt;= state.ingredients.length ||</span>
+<span class="cstat-no" title="statement not covered" >        to &gt;= state.ingredients.length ||</span>
+<span class="cstat-no" title="statement not covered" >        from === to</span>
+<span class="cstat-no" title="statement not covered" >      ) {</span>
 <span class="cstat-no" title="statement not covered" >        return;</span>
 <span class="cstat-no" title="statement not covered" >      }</span>
-      const updated = [...state.ingredients];
-      const [moved] = updated.splice(from, 1);
-      updated.splice(to, 0, moved);
-      state.ingredients = updated;
-    }
+<span class="cstat-no" title="statement not covered" >      const updated = [...state.ingredients];</span>
+<span class="cstat-no" title="statement not covered" >      const [moved] = updated.splice(from, 1);</span>
+<span class="cstat-no" title="statement not covered" >      updated.splice(to, 0, moved);</span>
+<span class="cstat-no" title="statement not covered" >      state.ingredients = updated;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
   }
 });
 &nbsp;
@@ -292,7 +292,7 @@ export const {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-04-27T16:16:29.747Z
+                at 2026-04-28T11:53:57.675Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
