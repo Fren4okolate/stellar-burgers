@@ -1,4 +1,11 @@
-import { constructorReducer, addIngredient, removeIngredient, moveIngredient, clearConstructor } from './constructor';
+import {
+  constructorReducer,
+  setBun,
+  addIngredient,
+  removeIngredient,
+  moveIngredient,
+  clearConstructor
+} from './constructor';
 
 // Мок-ингредиент для тестов (TConstructorIngredient)
 const mockIngredient = {
@@ -49,6 +56,15 @@ describe('constructorReducer', () => {
     expect(state.ingredients).toHaveLength(1);
     // Проверяем, что id добавленного ингредиента совпадает с ожидаемым
     expect(state.ingredients[0].id).toBe('1');
+  });
+
+  it('добавляет булку', () => {
+    // Диспатчим экшен setBun с моковой булкой
+    const action = setBun(mockBun);
+    // Получаем новый state после установки булки
+    const state = constructorReducer(initialState, action);
+    // Проверяем, что в состоянии сохранилась выбранная булка
+    expect(state.bun).toEqual(mockBun);
   });
 
   it('удаляет ингредиент', () => {
